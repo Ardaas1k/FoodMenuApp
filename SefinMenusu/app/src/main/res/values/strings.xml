@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SefinMenusu</string>
+    <string name="button">Button</string>
+    <string name="enter_an_food_name">Enter an food name</string>
+    <string name="add_food">Add food</string>
+    <string name="hello_food_world">Hello Food World!</string>
+    <string name="enter_a_food_name">Enter_a_food_name</string>
+    <string name="next">Next</string>
+    <string name="random_food">RANDOM FOOD</string>
+    <string name="back">BACK</string>
+    <string name="textview">TextView</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
+
+</resources>
