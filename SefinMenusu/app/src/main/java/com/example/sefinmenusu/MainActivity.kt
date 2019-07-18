@@ -14,6 +14,12 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_list.view.listTxt
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
+import android.os.PersistableBundle
+import java.io.FileInputStream
+import java.io.ObjectInputStream
+import android.os.Parcelable
+import android.util.Log
 
 
 @Suppress("NAME_SHADOWING")
@@ -21,25 +27,17 @@ class MainActivity : AppCompatActivity() {
 
     var arrPackage: ArrayList<items>? = null
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        insertItem(items("Hamburger"))
-        insertItem(items("Makarna"))
+       // setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         arrPackage = ArrayList()
 
 
-        //foodArrayList.text = arrPackage.toString()
-
-
         list_item.layoutManager = LinearLayoutManager(this)
         list_item.adapter = foodAdapter(arrPackage!!, this)
-
 /*
         fun arrayToString(array: ArrayList<items>) : String {
             var str = ""
@@ -56,8 +54,6 @@ class MainActivity : AppCompatActivity() {
             insertItem(newFood)
             list_item.layoutManager = LinearLayoutManager(this)
             list_item.adapter = foodAdapter(arrPackage!!, this)
-
-//          foodArrayList.text = arrayToString(arrPackage!!)
             addFoodTxt.text.clear()
         }
 
@@ -80,6 +76,16 @@ class MainActivity : AppCompatActivity() {
             savePrefData()
             println("You Click Save Button")
         }
+
+  /*      if(savedInstanceState!=null){
+            arrPackage = savedInstanceState.getSerializable("savedItems") as ArrayList<items>?
+            println(arrPackage)
+          // list_item.layoutManager = LinearLayoutManager(this)
+            //list_item.adapter = foodAdapter(arrPackage!!, this)
+
+        }
+*/
+
     }
 
 
@@ -108,7 +114,6 @@ class MainActivity : AppCompatActivity() {
         }.type
         arrPackage = gson.fromJson(json, type)
         println(arrPackage)
-
     }
 
     private fun insertItem(newFood: items) {
@@ -134,6 +139,29 @@ class MainActivity : AppCompatActivity() {
         println(json)
         editor.apply()
     }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        val fis = FileInputStream("savedItems")
+        val ois = ObjectInputStream(fis)
+        arrPackage = ois.readObject() as ArrayList<items>
+        outState.putSerializable("savedItems",arrPackage)
+
+       // outState.putParcelableArrayList("savedItems",arrPackage)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        if (savedInstanceState != null) {
+            arrPackage = savedInstanceState.getSerializable("savedItems") as ArrayList<items>?
+        }
+        println(arrPackage)
+    }
+
+
+
+
+
 }
 
 
