@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SefinMenusu</string>
+    <string name="app_name">Android Food App</string>
     <string name="button">Button</string>
     <string name="enter_an_food_name">Enter an food name</string>
     <string name="add_food">Add food</string>
