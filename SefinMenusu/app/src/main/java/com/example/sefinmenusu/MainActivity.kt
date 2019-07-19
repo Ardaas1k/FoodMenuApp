@@ -22,77 +22,34 @@ import java.io.FileInputStream
 import java.io.ObjectInputStream
 import android.os.Parcelable
 import android.util.Log
+import java.io.Serializable
 
 
-@Suppress("NAME_SHADOWING")
 class MainActivity : AppCompatActivity() {
 
-    var arrPackage: ArrayList<items>? = null
+
+    var arrPackage2: ArrayList<parcelabelFoodItems>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        arrPackage2 = ArrayList()
 
-        arrPackage = ArrayList()
 
-
-        list_item.layoutManager = LinearLayoutManager(this)
-        list_item.adapter = foodAdapter(arrPackage!!, this)
-/*
-        fun arrayToString(array: ArrayList<items>) : String {
-            var str = ""
-            for (i in array) {
-                str += i.line1 + "\n"
-            }
-
-            return str.trim()
-        }
-*/
-        addFoodBtn.setOnClickListener {
-
-            val newFood = items(addFoodTxt.text.toString().trim())
-            insertItem(newFood)
-            list_item.layoutManager = LinearLayoutManager(this)
-            list_item.adapter = foodAdapter(arrPackage!!, this)
-            addFoodTxt.text.clear()
-        }
-
-        backPageBtn.setOnClickListener {
-            val intent = Intent(this, SefinMenusuKami2::class.java)
-           /* val bundle = Bundle()
-            bundle.putSerializable("arrPackage", arrPackage)
-            intent.putExtras(bundle) */
-            startActivity(intent)
-
-        }
-
-        loadBtn.setOnClickListener {
-            loadPrefData()
-            list_item.layoutManager = LinearLayoutManager(this)
-            list_item.adapter = foodAdapter(arrPackage!!, this)
-            println("You clicked load Button")
-        }
-
-        saveBtn.setOnClickListener {
-            savePrefData()
-            println("You Click Save Button")
-        }
-
+        setRecyclerView()
+        setListeners()
 
         if (savedInstanceState != null) {
-            arrPackage = savedInstanceState.getSerializable("savedItems") as ArrayList<items>?
-            list_item.layoutManager = LinearLayoutManager(this)
-            list_item.adapter = foodAdapter(arrPackage!!, this)
-
+            arrPackage2 = savedInstanceState.getSerializable("savedItems") as ArrayList<parcelabelFoodItems>?
+            setRecyclerView()
         }
+
     }
-
-
-        class foodAdapter(val items: ArrayList<items>, val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+        class foodAdapter(val items: ArrayList<parcelabelFoodItems>, val context: Context) : RecyclerView.Adapter<ViewHolder>() {
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-                holder.foodTxt.text = items.get(position).toString()
+                holder.foodTxt.text = items.get(position).line1
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -112,29 +69,25 @@ class MainActivity : AppCompatActivity() {
             val sharedPreferences = getSharedPreferences("key", Context.MODE_PRIVATE)
             val gson = Gson()
             val json = sharedPreferences.getString("key", "")
-            val type = object : TypeToken<ArrayList<items>>() {
+            val type = object : TypeToken<ArrayList<parcelabelFoodItems>>() {
             }.type
-            arrPackage = gson.fromJson(json, type)
-            println(arrPackage)
+            arrPackage2 = gson.fromJson(json, type)
+            println(arrPackage2)
         }
 
-        private fun insertItem(newFood: items) {
-            arrPackage?.add(newFood)
+        private fun insertItem(newFood: parcelabelFoodItems) {
+            arrPackage2?.add(newFood)
 
         }
 
         private fun savePrefData() {
 
-            val ModelArrayList = arrPackage
-
+            val ModelArrayList = arrPackage2
             val shref: SharedPreferences
             val editor: SharedPreferences.Editor
-
             shref = getSharedPreferences("key", Context.MODE_PRIVATE)
-
             val gson = Gson()
             val json = gson.toJson(ModelArrayList)
-
             editor = shref.edit()
             editor.remove("key").apply()
             editor.putString("key", json)
@@ -144,7 +97,40 @@ class MainActivity : AppCompatActivity() {
 
         override fun onSaveInstanceState(outState: Bundle) {
             super.onSaveInstanceState(outState)
-            outState.putSerializable("savedItems", arrPackage)
+            outState.putSerializable("savedItems", arrPackage2)
+        }
+
+        private fun setRecyclerView(){
+            list_item.layoutManager = LinearLayoutManager(this)
+            list_item.adapter = foodAdapter(arrPackage2!!, this)
+        }
+
+        public fun setListeners(){
+            addFoodBtn.setOnClickListener {
+
+                val newFood = parcelabelFoodItems(addFoodTxt.text.trim().toString())
+                insertItem(newFood)
+                setRecyclerView()
+                addFoodTxt.text.clear()
+            }
+
+            backPageBtn.setOnClickListener {
+                val intent = Intent(this, SefinMenusuKami2::class.java)
+                intent.putParcelableArrayListExtra("arrPackage2",arrPackage2)
+                startActivity(intent)
+
+            }
+
+            loadBtn.setOnClickListener {
+                loadPrefData()
+                setRecyclerView()
+                println("You clicked load Button")
+            }
+
+            saveBtn.setOnClickListener {
+                savePrefData()
+                println("You Click Save Button")
+            }
         }
 
 
